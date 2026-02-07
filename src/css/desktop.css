@@ -1,0 +1,299 @@
+/* サイドパネル本体 */
+.kintone-side-panel {
+  position: fixed;
+  top: 0;
+  right: -560px;
+  width: 560px;
+  height: 100vh;
+  background-color: #ffffff;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  transition: right 0.3s ease;
+  overflow: hidden;
+}
+
+.kintone-side-panel--open {
+  right: 0;
+}
+
+/* パネルヘッダー */
+.kintone-side-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.kintone-side-panel__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.kintone-side-panel__close-button {
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  border: none;
+  font-size: 24px;
+  color: #666666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.kintone-side-panel__close-button:hover {
+  background-color: #e0e0e0;
+}
+
+.kintone-side-panel__close-button:active {
+  background-color: #d0d0d0;
+}
+
+/* パネルコンテンツ */
+.kintone-side-panel__content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.kintone-side-panel__section {
+  margin-bottom: 30px;
+}
+
+.kintone-side-panel__section:last-child {
+  margin-bottom: 0;
+}
+
+.kintone-side-panel__section h3 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333333;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 8px;
+}
+
+.kintone-side-panel__section p {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #666666;
+}
+
+.kintone-side-panel__section p:last-child {
+  margin-bottom: 0;
+}
+
+.kintone-side-panel__section ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.kintone-side-panel__section li {
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #666666;
+}
+
+.kintone-side-panel__section li:last-child {
+  margin-bottom: 0;
+}
+
+/* 注釈テキスト */
+.kintone-side-panel__note {
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-left: 3px solid #3498db;
+  font-size: 13px;
+  color: #555555;
+  line-height: 1.5;
+  margin-top: 10px;
+}
+
+/* フィールド選択セクション */
+.kintone-side-panel__field-select-container {
+  margin-top: 15px;
+}
+
+.kintone-side-panel__select-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 8px;
+}
+
+.kintone-side-panel__controls-wrapper {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.kintone-side-panel__select {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #333333;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.kintone-side-panel__select:hover {
+  border-color: #3498db;
+}
+
+.kintone-side-panel__select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.kintone-side-panel__select option {
+  padding: 10px;
+}
+
+/* 取得ボタン */
+.kintone-side-panel__fetch-button {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: #3498db;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.kintone-side-panel__fetch-button:hover:not(:disabled) {
+  background-color: #2980b9;
+}
+
+.kintone-side-panel__fetch-button:active:not(:disabled) {
+  background-color: #21618c;
+}
+
+.kintone-side-panel__fetch-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* テキストエリア */
+.kintone-side-panel__textarea {
+  width: 100%;
+  min-height: 360px;
+  padding: 12px;
+  font-size: 13px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  color: #333333;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  resize: vertical;
+  line-height: 1.5;
+  margin-top: 10px;
+  box-sizing: border-box;
+}
+
+.kintone-side-panel__textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+/* アクションボタン */
+.kintone-side-panel__action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.kintone-side-panel__action-button {
+  flex: 1;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.kintone-side-panel__action-button--primary {
+  color: #ffffff;
+  background-color: #27ae60;
+}
+
+.kintone-side-panel__action-button--primary:hover:not(:disabled) {
+  background-color: #229954;
+}
+
+.kintone-side-panel__action-button--primary:active:not(:disabled) {
+  background-color: #1e8449;
+}
+
+.kintone-side-panel__action-button--secondary {
+  color: #ffffff;
+  background-color: #e74c3c;
+}
+
+.kintone-side-panel__action-button--secondary:hover:not(:disabled) {
+  background-color: #c0392b;
+}
+
+.kintone-side-panel__action-button--secondary:active:not(:disabled) {
+  background-color: #a93226;
+}
+
+.kintone-side-panel__action-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* スクロールバーのスタイリング（Webkit系ブラウザ） */
+.kintone-side-panel__content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.kintone-side-panel__content::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+.kintone-side-panel__content::-webkit-scrollbar-thumb {
+  background: #cccccc;
+  border-radius: 4px;
+}
+
+.kintone-side-panel__content::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+}
+
+/* レスポンシブ対応 */
+@media screen and (max-width: 768px) {
+  .kintone-side-panel {
+    width: 100%;
+    right: -100%;
+  }
+}

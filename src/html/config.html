@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>プラグイン設定</title>
+</head>
+<body>
+  <div class="plugin-config">
+    <main class="plugin-config__main">
+      <section class="plugin-config__section plugin-config__section--auto-fetch">
+        <div class="plugin-config__auto-fetch-container">
+          <label class="plugin-config__toggle plugin-config__toggle--auto-fetch">
+            <input type="checkbox" id="auto-fetch-style" class="plugin-config__toggle-input" checked>
+            <span class="plugin-config__toggle-label">フィールド選択時に自動的にスタイル情報を取得する</span>
+          </label>
+          <p class="plugin-config__description">
+            この設定を有効にすると、フィールドを選択した際に自動的にスタイル情報を取得して表示します。無効にした場合は、「取得」ボタンを押してスタイル情報を取得する必要があります。
+          </p>
+        </div>
+      </section>
+    </main>
+    <footer class="plugin-config__footer">
+      <button type="button" id="plugin-submit" class="plugin-config__button plugin-config__button--primary">保存</button>
+      <button type="button" id="plugin-cancel" class="plugin-config__button plugin-config__button--secondary">キャンセル</button>
+    </footer>
+  </div>
+</body>
+</html>

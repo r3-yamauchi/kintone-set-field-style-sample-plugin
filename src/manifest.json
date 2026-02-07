@@ -1,0 +1,37 @@
+{
+  "manifest_version": 1,
+  "version": 1,
+  "type": "APP",
+  "desktop": {
+    "js": [
+      "js/desktop.js"
+    ],
+    "css": [
+      "css/desktop.css"
+    ]
+  },
+  "icon": "image/icon.png",
+  "config": {
+    "html": "html/config.html",
+    "js": [
+      "js/config.js"
+    ],
+    "css": [
+      "css/51-modern-default.css",
+      "css/config.css"
+    ],
+    "required_params": []
+  },
+  "homepage_url": {
+    "ja": "https://yamauchi.win",
+    "en": "https://yamauchi.win"
+  },
+  "name": {
+    "ja": "フィールドスタイル取得・設定サンプル",
+    "en": "Field Style Get/Set Sample"
+  },
+  "description": {
+    "ja": "kintone.app.record.getFieldStyle および setFieldStyle の実行サンプル",
+    "en": "Sample plugin demonstrating kintone.app.record.getFieldStyle and setFieldStyle APIs"
+  }
+}
