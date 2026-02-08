@@ -10,6 +10,11 @@
       "css/desktop.css"
     ]
   },
+  "mobile": {
+    "js": [
+      "js/mobile.js"
+    ]
+  },
   "icon": "image/icon.png",
   "config": {
     "html": "html/config.html",

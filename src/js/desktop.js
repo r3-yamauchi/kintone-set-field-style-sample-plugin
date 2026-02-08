@@ -467,10 +467,448 @@
   }
 
   /**
+   * メニューボタンがクリックされた際の処理
+   * 適用するスタイルの内容フィールドから値を取得し、スタイル適用対象フィールドに適用する
+   */
+  async function handleMenuButtonClick() {
+    try {
+      // プルダウンの選択値を取得
+      const targetFieldSelector = document.getElementById('target-field-selector');
+      const styleSourceSelector = document.getElementById('style-source-selector');
+
+      if (!targetFieldSelector || !styleSourceSelector) {
+        alert('プルダウンが見つかりません。');
+        return;
+      }
+
+      const targetFieldCode = targetFieldSelector.value;
+      const styleSourceFieldCode = styleSourceSelector.value;
+
+      // バリデーション: 両方のフィールドが選択されているか確認
+      if (!targetFieldCode) {
+        alert('スタイル適用対象のフィールドを選択してください。');
+        return;
+      }
+
+      if (!styleSourceFieldCode) {
+        alert('適用するスタイルの内容のフィールドを選択してください。');
+        return;
+      }
+
+      // 現在のレコードデータを取得
+      const record = kintone.app.record.get();
+
+      // スタイル情報を含むフィールドの値を取得
+      const styleSourceField = record.record[styleSourceFieldCode];
+      if (!styleSourceField || !styleSourceField.value) {
+        alert('適用するスタイルの内容が空です。JSON形式でスタイル情報を入力してください。');
+        return;
+      }
+
+      const styleJsonString = styleSourceField.value;
+
+      // JSON文字列をパース
+      let styleObject;
+      try {
+        styleObject = JSON.parse(styleJsonString);
+      } catch (parseError) {
+        alert('スタイル情報のJSON形式が正しくありません。\n\nエラー: ' + parseError.message);
+        return;
+      }
+
+      // フィールドスタイルを適用
+      await kintone.app.record.setFieldStyle(targetFieldCode, styleObject);
+
+      console.log('適用したスタイル:', styleObject);
+    } catch (error) {
+      console.error('フィールドスタイルの適用に失敗しました', error);
+      alert('エラー: ' + error.message);
+    }
+  }
+
+  /**
+   * スタイル適用対象プルダウンを作成する関数
+   * @param {Array} fields - フィールド一覧
+   * @return {HTMLElement} プルダウン要素を含むコンテナ
+   */
+  function createTargetFieldDropdown(fields) {
+    const container = document.createElement('div');
+    container.style.cssText = `
+      display: inline-flex;
+      flex-direction: column;
+      margin: 10px;
+      vertical-align: middle;
+    `;
+
+    const label = document.createElement('label');
+    label.textContent = 'スタイル適用対象:';
+    label.style.cssText = `
+      font-size: 12px;
+      margin-bottom: 4px;
+      font-weight: bold;
+    `;
+
+    const select = document.createElement('select');
+    select.id = 'target-field-selector';
+    select.style.cssText = `
+      padding: 6px 12px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: white;
+      cursor: pointer;
+    `;
+
+    // デフォルトオプション
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = '-- フィールドを選択してください --';
+    select.appendChild(defaultOption);
+
+    // フィールドオプションを追加
+    for (let i = 0; i < fields.length; i++) {
+      const field = fields[i];
+      const option = document.createElement('option');
+      option.value = field.code;
+      option.textContent = `${field.label} (${field.code})`;
+      select.appendChild(option);
+    }
+
+    container.appendChild(label);
+    container.appendChild(select);
+
+    return container;
+  }
+
+  /**
+   * 適用するスタイルの内容プルダウンを作成する関数
+   * @param {Array} fields - フィールド一覧
+   * @return {HTMLElement} プルダウン要素を含むコンテナ
+   */
+  function createStyleSourceDropdown(fields) {
+    const container = document.createElement('div');
+    container.style.cssText = `
+      display: inline-flex;
+      flex-direction: column;
+      margin: 10px;
+      vertical-align: middle;
+    `;
+
+    const label = document.createElement('label');
+    label.textContent = '適用するスタイルの内容:';
+    label.style.cssText = `
+      font-size: 12px;
+      margin-bottom: 4px;
+      font-weight: bold;
+    `;
+
+    const select = document.createElement('select');
+    select.id = 'style-source-selector';
+    select.style.cssText = `
+      padding: 6px 12px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: white;
+      cursor: pointer;
+    `;
+
+    // デフォルトオプション
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = '-- フィールドを選択してください --';
+    select.appendChild(defaultOption);
+
+    // 文字列（複数行）フィールドのみを追加
+    for (let i = 0; i < fields.length; i++) {
+      const field = fields[i];
+      if (field.type === 'MULTI_LINE_TEXT') {
+        const option = document.createElement('option');
+        option.value = field.code;
+        option.textContent = `${field.label} (${field.code})`;
+        select.appendChild(option);
+      }
+    }
+
+    container.appendChild(label);
+    container.appendChild(select);
+
+    return container;
+  }
+
+  /**
+   * 反映するボタンを作成する関数
+   * @return {HTMLElement} ボタン要素
+   */
+  function createApplyStyleButton() {
+    const button = document.createElement('button');
+    button.id = 'apply-style-button';
+    button.textContent = '反映する';
+    button.style.cssText = `
+      padding: 8px 16px;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      margin: 10px;
+      vertical-align: bottom;
+      transition: background-color 0.2s ease;
+    `;
+
+    // ホバー効果
+    button.addEventListener('mouseenter', function() {
+      button.style.backgroundColor = '#229954';
+    });
+
+    button.addEventListener('mouseleave', function() {
+      button.style.backgroundColor = '#27ae60';
+    });
+
+    // クリックイベント
+    button.addEventListener('click', function() {
+      handleMenuButtonClick();
+    });
+
+    return button;
+  }
+
+  /**
+   * 既定のスタイルへ戻すボタンを作成する関数
+   * @return {HTMLElement} ボタン要素
+   */
+  function createResetStyleButton() {
+    const button = document.createElement('button');
+    button.id = 'reset-style-button';
+    button.textContent = '既定のスタイルへ戻す';
+    button.style.cssText = `
+      padding: 8px 16px;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      margin: 10px;
+      vertical-align: bottom;
+      transition: background-color 0.2s ease;
+    `;
+
+    // ホバー効果
+    button.addEventListener('mouseenter', function() {
+      button.style.backgroundColor = '#c0392b';
+    });
+
+    button.addEventListener('mouseleave', function() {
+      button.style.backgroundColor = '#e74c3c';
+    });
+
+    // クリックイベント
+    button.addEventListener('click', async function() {
+      await handleResetStyleButtonClick();
+    });
+
+    return button;
+  }
+
+  /**
+   * 既定のスタイルへ戻すボタンがクリックされた際の処理
+   */
+  async function handleResetStyleButtonClick() {
+    try {
+      // プルダウンの選択値を取得
+      const targetFieldSelector = document.getElementById('target-field-selector');
+
+      if (!targetFieldSelector) {
+        alert('プルダウンが見つかりません。');
+        return;
+      }
+
+      const targetFieldCode = targetFieldSelector.value;
+
+      // バリデーション: フィールドが選択されているか確認
+      if (!targetFieldCode) {
+        alert('スタイル適用対象のフィールドを選択してください。');
+        return;
+      }
+
+      // フィールドスタイルを既定に戻す
+      await kintone.app.record.setFieldStyle(targetFieldCode, 'DEFAULT');
+
+      console.log('スタイルを既定に戻しました:', targetFieldCode);
+    } catch (error) {
+      console.error('フィールドスタイルのリセットに失敗しました', error);
+      alert('エラー: ' + error.message);
+    }
+  }
+
+  /**
    * レコード追加・編集画面のイベントハンドラー
    */
   kintone.events.on(['app.record.create.show', 'app.record.edit.show'], async function(event) {
     await initializeSidePanel();
+
+    // フィールド情報を取得
+    const fields = await getFilteredFields();
+
+    // 既存のボタンとプルダウンを削除（重複防止）
+    const existingApplyButton = document.getElementById('apply-style-button');
+    if (existingApplyButton) {
+      existingApplyButton.remove();
+    }
+    const existingResetButton = document.getElementById('reset-style-button');
+    if (existingResetButton) {
+      existingResetButton.remove();
+    }
+    const existingTargetDropdown = document.getElementById('target-field-selector');
+    if (existingTargetDropdown && existingTargetDropdown.parentElement) {
+      existingTargetDropdown.parentElement.remove();
+    }
+    const existingSourceDropdown = document.getElementById('style-source-selector');
+    if (existingSourceDropdown && existingSourceDropdown.parentElement) {
+      existingSourceDropdown.parentElement.remove();
+    }
+
+    // ヘッダーメニュースペースを取得
+    const headerMenuSpace = kintone.app.record.getHeaderMenuSpaceElement();
+
+    if (headerMenuSpace) {
+      // プルダウンとボタンを作成してヘッダーメニュースペースに追加
+      const targetDropdown = createTargetFieldDropdown(fields);
+      const sourceDropdown = createStyleSourceDropdown(fields);
+      const applyButton = createApplyStyleButton();
+      const resetButton = createResetStyleButton();
+
+      headerMenuSpace.appendChild(targetDropdown);
+      headerMenuSpace.appendChild(sourceDropdown);
+      headerMenuSpace.appendChild(applyButton);
+      headerMenuSpace.appendChild(resetButton);
+
+      // プルダウンの初期値を設定
+      const targetFieldSelector = document.getElementById('target-field-selector');
+      const styleSourceSelector = document.getElementById('style-source-selector');
+
+      // スタイル適用対象プルダウン: フィールドが1つ以上ある場合、最初のフィールドを選択
+      if (targetFieldSelector && fields.length > 0) {
+        targetFieldSelector.value = fields[0].code;
+      }
+
+      // 適用するスタイルの内容プルダウン: 文字列（複数行）フィールドの最初のものを選択
+      if (styleSourceSelector) {
+        const multiLineFields = fields.filter(function(field) {
+          return field.type === 'MULTI_LINE_TEXT';
+        });
+        if (multiLineFields.length > 0) {
+          styleSourceSelector.value = multiLineFields[0].code;
+        }
+      }
+    }
+
+    return event;
+  });
+
+  /**
+   * モバイル版URLへ変換する関数
+   * @param {string} currentUrl - 現在のURL
+   * @return {string} モバイル版のURL
+   */
+  function convertToMobileUrl(currentUrl) {
+    // PC版のURLパターン: https://xxx.cybozu.com/k/{appId}/
+    // モバイル版のURLパターン: https://xxx.cybozu.com/k/m/{appId}/
+    let mobileUrl = currentUrl.replace(/\/k\/(\d+)\//, '/k/m/$1/');
+
+    // ハッシュ部分（#record=1など）をクエリパラメータ（?record=1）に変換
+    mobileUrl = mobileUrl.replace(/#record=/, '?record=');
+
+    return mobileUrl;
+  }
+
+  /**
+   * モバイル版へ遷移ボタンを作成する関数
+   * @return {HTMLElement} ボタン要素
+   */
+  function createMobileTransitionButton() {
+    const button = document.createElement('button');
+    button.id = 'mobile-transition-button';
+    button.textContent = 'モバイル版へ移動';
+    button.style.cssText = `
+      padding: 8px 16px;
+      background-color: #ffd700;
+      color: black;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      margin: 10px;
+      transition: background-color 0.3s ease;
+    `;
+
+    // ホバー効果
+    button.addEventListener('mouseenter', function() {
+      button.style.backgroundColor = '#f0c000';
+    });
+
+    button.addEventListener('mouseleave', function() {
+      button.style.backgroundColor = '#ffd700';
+    });
+
+    // クリックイベント
+    button.addEventListener('click', function() {
+      const currentUrl = window.location.href;
+      const mobileUrl = convertToMobileUrl(currentUrl);
+
+      // モバイル版URLへ遷移
+      window.location.href = mobileUrl;
+    });
+
+    return button;
+  }
+
+  /**
+   * レコード一覧画面表示時のイベントハンドラー
+   */
+  kintone.events.on('app.record.index.show', function(event) {
+    // 既存のボタンを削除（重複防止）
+    const existingButton = document.getElementById('mobile-transition-button');
+    if (existingButton) {
+      existingButton.remove();
+    }
+
+    // ヘッダーメニュースペースを取得（画面右上）
+    const headerMenuSpace = kintone.app.getHeaderMenuSpaceElement();
+
+    if (headerMenuSpace) {
+      // ボタンを作成してヘッダーメニュースペースに追加
+      const button = createMobileTransitionButton();
+      headerMenuSpace.appendChild(button);
+    }
+
+    return event;
+  });
+
+  /**
+   * レコード詳細（閲覧）画面表示時のイベントハンドラー
+   */
+  kintone.events.on('app.record.detail.show', function(event) {
+    // 既存のボタンを削除（重複防止）
+    const existingButton = document.getElementById('mobile-transition-button');
+    if (existingButton) {
+      existingButton.remove();
+    }
+
+    // ヘッダーメニュースペースを取得（画面右上）
+    const headerMenuSpace = kintone.app.record.getHeaderMenuSpaceElement();
+
+    if (headerMenuSpace) {
+      // ボタンを作成してヘッダーメニュースペースに追加
+      const button = createMobileTransitionButton();
+      headerMenuSpace.appendChild(button);
+    }
+
     return event;
   });
 

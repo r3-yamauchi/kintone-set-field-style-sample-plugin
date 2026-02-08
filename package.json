@@ -1,7 +1,7 @@
 {
   "name": "kintone-set-field-style-sample-plugin",
   "description": "Sample plugin demonstrating kintone.app.record.getFieldStyle and setFieldStyle APIs",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "start": "node scripts/npm-start.js",
     "upload": "cli-kintone plugin upload --input dist/plugin.zip --watch",
